@@ -14,7 +14,6 @@ jobs:
             triplet: x64-windows
             packages: >
               sccache
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@main
@@ -33,7 +32,6 @@ jobs:
           move .\bin\release\premake5.exe D:\a\BlackTek-Server\BlackTek-Server\premake5.exe
           cd D:\a\BlackTek-Server\BlackTek-Server
           D:\a\BlackTek-Server\BlackTek-Server\premake5.exe vs2022
-
       - name: Configure Package Manager
         uses: egor-tensin/vs-shell@v2
         with:
@@ -44,13 +42,26 @@ jobs:
           cd D:\a\BlackTek-Server
           vcpkg install --triplet x64-windows
           vcpkg integrate install
-
       - name: Compile Release
         run: |
           cd D:\a\BlackTek-Server\BlackTek-Server
           msbuild Black-Tek-Server.sln /p:Configuration=Release
-
       - name: Compile Debug
         run: |
           cd D:\a\BlackTek-Server\BlackTek-Server
           msbuild Black-Tek-Server.sln /p:Configuration=Debug
+
+      # Adicionando upload dos artefatos gerados
+      - name: Upload Artifacts (Release Build)
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: BlackTek-Server-Release
+          path: D:\COISAS\TIBIA\Release\* # Ajuste para o caminho novo
+
+      - name: Upload Artifacts (Debug Build)
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: BlackTek-Server-Debug
+          path: D:\COISAS\TIBIA\Debug\* # Ajuste para o caminho novo
